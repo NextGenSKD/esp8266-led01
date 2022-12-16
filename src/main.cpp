@@ -1,76 +1,129 @@
 #include <Arduino.h>
 #define LED_PIN 5
 #define LED_NUM 100
-#include "FastLED.h"
+#include <FastLED.h>
 
 CRGB leds[LED_NUM];
 
-void setup() {
-  Serial.begin(921600);
-  Serial.println("SETUP! Success!");
-  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, LED_NUM);
-  FastLED.setBrightness(50);
-}
 byte counter = 0;
-int colour1;
-int colour2;
-int colour3;
+int col_b;
+int col_r;
+int col_g;
 byte combi = 0;
+byte combi1 = 1;
+byte combi2 = 0;
 int uskor =1;
 bool c_flag = true;
 bool combi_flag = true;
+
+void select_anim (byte combix)
+{
+          if (combix == 1) {col_b=0;};
+          if (combix == 2) {col_r=0;};
+          if (combix == 3) {col_g=0;};
+          if (combix == 4) {col_b=0; col_r=0;};
+          if (combix == 5) {col_g=0; col_r=0;};
+          if (combix == 6) {col_b=0; col_g=0;};
+          if (combix == 7) {col_b=0; col_g=0; col_r=128;};
+          if (combix == 8) {col_b=0; col_g=128; col_r=0;};
+          if (combix == 9) {col_b=128; col_g=0; col_r=0;};
+          if (combix == 10) {col_b=128; col_g=0; col_r=128;};
+          if (combix == 11) {col_b=128; col_g=128; col_r=0;};
+          if (combix == 12) {col_b=128; col_g=0; col_r=128;};
+          if (combix == 13) {col_b=128; col_g=128; col_r=128;};
+}
+
+void setup() {
+  Serial.begin(921600);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, LED_NUM);
+  FastLED.setBrightness(50);
+  Serial.println("SETUP! Success!");
+}
+
 void loop() {
-  FastLED.clear();
-  Serial.print("\rCounter:");
+  // Debug info
+  Serial.print("\r Counter:");
   Serial.print(counter);
   Serial.print(" c_flag:");
   Serial.print(c_flag);
   Serial.print(" combi:");
   Serial.print(combi);
+  Serial.print(" combi1:");
+  Serial.print(combi1);
+  Serial.print(" combi2:");
+  Serial.print(combi2);
   Serial.print(" combi_flag:");
   Serial.print(combi_flag);
   Serial.print(" uskor:");
   Serial.print(uskor);
-  uskor = abs (sin(counter)*5);
- // leds[counter] = 0xffff00;
- // leds[counter+1] = 0xff0000;
- // leds[counter+2] = 0x00ff00;
- // leds[counter+3] = 0x0000ff;
-//  leds[counter+4] = 0xffff00;
- if (counter>= LED_NUM) {c_flag=false; if (combi_flag) combi=random(6);}//combi++;  else combi--;}
- if (counter<= 0) {c_flag=true;}
+  Serial.print("   ");
+  // End Debug  
+ uskor = abs (sin(counter)*5);
+ if (counter>= LED_NUM) {c_flag=false; combi=combi2;  combi2=random(13);}
+ if (counter<= 0) {c_flag=true; combi1=combi2; combi=combi; combi2=random(13);}
  if (c_flag) counter+=2;  else counter-=2;
- if (combi>= 6) combi_flag=false; 
- if (combi== 0) combi_flag=true;
- 
- 
-
-//for (int o=0;o<=90;o++) 
- // {
-//    colour1 = 128+sin(counter)*64;
-//int colour1 = random(0xff);
-    Serial.print("  Colour1: ");
-    Serial.print(colour1);
+ //if (combi>= 6) combi_flag=false; 
+ //if (combi== 0) combi_flag=true;
+   //  Serial.print("  col_b: ");
+  //  Serial.print(col_b);
+    for (int i=0;i<=counter;i++) 
+        {
+          col_b = 128+sin(i/10)*100;
+          col_r = 128+sin(i+counter/10)*100;
+          col_g = 128+cos(i+counter/10)*100;
+          //if (c_flag) col_g=col_r; else col_g=col_b;
+          select_anim (combi1);
+/*          if (combi1 == 1) {col_b=0;};
+          if (combi1 == 2) {col_r=0;};
+          if (combi1 == 3) {col_g=0;};
+          if (combi1 == 4) {col_b=0; col_r=0;};
+          if (combi1 == 5) {col_g=0; col_r=0;};
+          if (combi1 == 6) {col_b=0; col_g=0;};
+          if (combi1 == 7) {col_b=0; col_g=0; col_r=128;};
+          if (combi1 == 8) {col_b=0; col_g=128; col_r=0;};
+          if (combi1 == 9) {col_b=128; col_g=0; col_r=0;};
+          if (combi1 == 10) {col_b=128; col_g=0; col_r=128;};
+          if (combi1 == 11) {col_b=128; col_g=128; col_r=0;};
+          if (combi1 == 12) {col_b=128; col_g=0; col_r=128;};
+          if (combi1 == 13) {col_b=128; col_g=128; col_r=128;};
+*/
+          leds[i] = col_b+(col_r<<8)+(col_g<<16);
+          //Serial.print(" ");
+          //Serial.print(col_b);
+          } 
+    
     for (int i=counter;i<=LED_NUM;i++) 
         {
-          colour1 = 100+sin(i+counter/5)*100;
-          colour2 = 100+cos(i+counter/5)*100;
-          if (c_flag) colour3=colour1; else colour3=colour2;
-          if (combi == 1) {colour1=0;};
-          if (combi == 2) {colour2=0;};
-          if (combi == 3) {colour3=0;};
-          if (combi == 4) {colour1=0; colour2=0;};
-          if (combi == 5) {colour3=0; colour2=0;};
-          if (combi == 6) {colour1=0; colour3=0;};
-//          if (combi == 7) {colour=0; colour2=0};
- //         if (combi == 8) {colour1=0; colour2=0};
-
-
-          leds[i] = colour1+(colour2<<8)+(colour3<<16);//i*3<<16;//random(3);
+          col_b = 128+sin(i+counter/10)*100;
+          col_r = 128+cos(i+counter/10)*100;
+          col_g = 128+cos(i/10)*100;//if (c_flag) col_g=col_b; else col_g=col_r;
+          select_anim (combi);
+   /*       if (combi == 1) {col_b=0;};
+          if (combi == 2) {col_r=0;};
+          if (combi == 3) {col_g=0;};
+          if (combi == 4) {col_b=0; col_r=0;};
+          if (combi == 5) {col_g=0; col_r=0;};
+          if (combi == 6) {col_b=0; col_g=0;};
+          if (combi == 7) {col_b=0; col_g=0; col_r=128;};
+          if (combi == 8) {col_b=0; col_g=128; col_r=0;};
+          if (combi == 9) {col_b=128; col_g=0; col_r=0;};
+          if (combi == 10) {col_b=128; col_g=0; col_r=128;};
+          if (combi == 11) {col_b=128; col_g=128; col_r=0;};
+          if (combi == 12) {col_b=128; col_g=0; col_r=128;};
+          if (combi == 13) {col_b=128; col_g=128; col_r=128;};
+*/
+          leds[i] = col_b+(col_r<<8)+(col_g<<16);
           //Serial.print(" ");
-          //Serial.print(colour1);
+          //Serial.print(col_b);
           }
+          
+        /*
+        //For test brightness     
+        for (int i=0;i<=LED_NUM;i++) 
+          { int col = 120+sin(i)*64;
+            leds[i] = 0+(col<<8)+(0<<16);} 
+        // */
   FastLED.show();
   delay(100);
-//  }
+  FastLED.clear();
 }
