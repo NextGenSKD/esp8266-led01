@@ -73,20 +73,7 @@ void loop() {
           col_g = 128+cos(i+counter/10)*100;
           //if (c_flag) col_g=col_r; else col_g=col_b;
           select_anim (combi1);
-/*          if (combi1 == 1) {col_b=0;};
-          if (combi1 == 2) {col_r=0;};
-          if (combi1 == 3) {col_g=0;};
-          if (combi1 == 4) {col_b=0; col_r=0;};
-          if (combi1 == 5) {col_g=0; col_r=0;};
-          if (combi1 == 6) {col_b=0; col_g=0;};
-          if (combi1 == 7) {col_b=0; col_g=0; col_r=128;};
-          if (combi1 == 8) {col_b=0; col_g=128; col_r=0;};
-          if (combi1 == 9) {col_b=128; col_g=0; col_r=0;};
-          if (combi1 == 10) {col_b=128; col_g=0; col_r=128;};
-          if (combi1 == 11) {col_b=128; col_g=128; col_r=0;};
-          if (combi1 == 12) {col_b=128; col_g=0; col_r=128;};
-          if (combi1 == 13) {col_b=128; col_g=128; col_r=128;};
-*/
+
           leds[i] = col_b+(col_r<<8)+(col_g<<16);
           //Serial.print(" ");
           //Serial.print(col_b);
@@ -98,20 +85,7 @@ void loop() {
           col_r = 128+cos(i+counter/10)*100;
           col_g = 128+cos(i/10)*100;//if (c_flag) col_g=col_b; else col_g=col_r;
           select_anim (combi);
-   /*       if (combi == 1) {col_b=0;};
-          if (combi == 2) {col_r=0;};
-          if (combi == 3) {col_g=0;};
-          if (combi == 4) {col_b=0; col_r=0;};
-          if (combi == 5) {col_g=0; col_r=0;};
-          if (combi == 6) {col_b=0; col_g=0;};
-          if (combi == 7) {col_b=0; col_g=0; col_r=128;};
-          if (combi == 8) {col_b=0; col_g=128; col_r=0;};
-          if (combi == 9) {col_b=128; col_g=0; col_r=0;};
-          if (combi == 10) {col_b=128; col_g=0; col_r=128;};
-          if (combi == 11) {col_b=128; col_g=128; col_r=0;};
-          if (combi == 12) {col_b=128; col_g=0; col_r=128;};
-          if (combi == 13) {col_b=128; col_g=128; col_r=128;};
-*/
+ 
           leds[i] = col_b+(col_r<<8)+(col_g<<16);
           //Serial.print(" ");
           //Serial.print(col_b);
