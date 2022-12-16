@@ -68,9 +68,9 @@ void loop() {
   //  Serial.print(col_b);
     for (int i=0;i<=counter;i++) 
         {
-          col_b = 128+sin(i/10)*100;
-          col_r = 128+sin(i+counter/10)*100;
-          col_g = 128+cos(i+counter/10)*100;
+          col_b = 64+sin(i/10)*64;
+          col_r = 64+sin(i+counter/10)*64;
+          col_g = 64+cos(i+counter/10)*64;
           //if (c_flag) col_g=col_r; else col_g=col_b;
           select_anim (combi1);
 
@@ -81,16 +81,19 @@ void loop() {
     
     for (int i=counter;i<=LED_NUM;i++) 
         {
-          col_b = 128+sin(i+counter/10)*100;
-          col_r = 128+cos(i+counter/10)*100;
-          col_g = 128+cos(i/10)*100;//if (c_flag) col_g=col_b; else col_g=col_r;
+          col_b = 64+sin(i/10-counter/10)*64;
+          col_r = 64+cos(i/10+counter/10)*64;
+          col_g = 64+cos(i/10)*100;
+          //if (c_flag) col_g=col_b; else col_g=col_r;
           select_anim (combi);
  
           leds[i] = col_b+(col_r<<8)+(col_g<<16);
           //Serial.print(" ");
           //Serial.print(col_b);
           }
-          
+       for (int i=0;i<=10;i++)   {
+      leds[random(LED_NUM)] = 128+(128<<8)+(128<<16);
+       }
         /*
         //For test brightness     
         for (int i=0;i<=LED_NUM;i++) 
