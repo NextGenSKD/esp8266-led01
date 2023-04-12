@@ -4,33 +4,33 @@
 #include <FastLED.h>
 
 CRGB leds[LED_NUM];
-
-int counter = 0;
-int col_b;
-int col_r;
-int col_g;
-byte combi = 0;
-byte combi1 = 1;
-byte combi2 = 0;
-int uskor =1;
-bool c_flag = true;
-bool combi_flag = true;
-byte bright = 64;
-bool test = false;
-bool stars = false;
-byte counterbyte;
-struct test_st
+struct led_RGB
 {
-  byte b1;
-  byte b2;
-  byte b3;
+  byte r;
+  byte g;
+  byte b;
 };
-test_st t;
+
+
+
+byte led_tentacle = 9;
+byte led_tentacle_l = 11;
+byte led_q = 0;
+int counter = 0;
+int col_b = 64;
+int col_r = 128;
+int col_g = 32;
+int bright = 32;
+led_RGB scr1[12][10];
+
+
+
 
 
 
 void select_anim (byte combix)
 {
+          if (combix == 0) {};
           if (combix == 1) {col_b=0;};
           if (combix == 2) {col_r=0;};
           if (combix == 3) {col_g=0;};
@@ -51,94 +51,140 @@ void debug()   {
 // Debug info
   Serial.print("\r Counter:");
   Serial.print(counter);
-  Serial.print(" c_flag:");
-  Serial.print(c_flag);
-  Serial.print(" combi:");
-  Serial.print(combi);
-  Serial.print(" combi1:");
-  Serial.print(combi1);
-  Serial.print(" combi2:");
-  Serial.print(combi2);
-  Serial.print(" combi_flag:");
-  Serial.print(combi_flag);
-  Serial.print(" uskor:");
-  Serial.print(uskor);
-  Serial.print(" t.b1:");
-  Serial.print(t.b1);
-  Serial.print(" t.b2:");
-  Serial.print(t.b2);
-  Serial.print(" t.b3:");
-  Serial.print(t.b3);
   Serial.print("   ");
-
+  Serial.print("Led_q:");
+   Serial.print(led_q);
+   Serial.print("   ");
+ 
 
   // End Debug
   }  
+
+void pulsator()
+
+{
+    if (counter < 180)
+    {
+      for (int i=0;i<=LED_NUM;i++)
+
+      {
+          col_b = 64+sin(i*100+counter)*bright;
+          col_r = 64+cos(i*100+counter)*bright;
+          col_g = 0;
+        leds[i] = col_b+(col_r<<8)+(col_g<<16);}
+    }
+    else {
+    //col_b = bright+sin(led_q/10)*bright;
+    //col_r = bright+cos(led_q/10)*bright;
+    //col_g = 0;
+    //select_anim(led_q);
+
+    counter = 0; 
+    if (led_q<=180) {led_q++;} else {led_q=0;}
+     }
+
+}
+void roller()
+
+{
+//print_pixels
+byte rnd = random(10);
+int x = 0;
+int y = random(led_tentacle);
+if (rnd==1) {
+       scr1[x][y].b = 120;
+       scr1[x][y].r = 120;
+       scr1[x][y].g = 0;
+} 
+if (rnd==2) {
+       scr1[x][y].b = 120;
+       scr1[x][y].r = 80;
+       scr1[x][y].g = 0;
+}
+
+if (rnd==3) {
+       scr1[x][y].b = 80;
+       scr1[x][y].r = 120;
+       scr1[x][y].g = 0;
+}
+  
+ // scroll
+
+for (int x=led_tentacle_l;x>0;x--)
+    {
+      
+      for (int y=0;y<=led_tentacle;y++)
+      { 
+       byte led_r = scr1[x-1][y].r;
+       byte led_g = scr1[x-1][y].g;
+       byte led_b = scr1[x-1][y].b;   
+       scr1[x][y].b = led_b;
+       scr1[x][y].r = led_r;
+       scr1[x][y].g = led_g;
+        if (led_r > 20) led_r-=20; else led_r=0;
+        if (led_g > 20) led_g-=20; else led_g=0;
+        if (led_b > 40) led_b-=20; else led_b=20;
+       scr1[x-1][y].b = led_b;
+       scr1[x-1][y].r = led_r;
+       scr1[x-1][y].g = led_g;
+       
+        }
+    
+    }
+
+
+//print_to_led
+for (int y=0;y<=led_tentacle;y++) 
+      {
+        for (int x=0;x<=led_tentacle_l;x++)
+        {
+          leds[y*led_tentacle+x] = ((scr1[x][y].b)+(scr1[x][y].r<<8)+(scr1[x][y].g<<16));
+        }
+
+}
+
+
+
+
+
+}
 
 void setup() {
   Serial.begin(921600);
   FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, LED_NUM);
   FastLED.setBrightness(20);
-  Serial.println("SETUP! Success!");
- //Serial.print("[31;40m");
+  Serial.println("\r SETUP Success!");
+ //init masive
+for (int x=0; x<=led_tentacle_l; x++) 
+      {
+        for (int y=0;y<=led_tentacle; y++)
+        {
+          scr1[x][y].r = 0;
+          scr1[x][y].g = 0;
+          scr1[x][y].b = 20;
+        }
+
+      }
+
+
 }
 
 void loop() {
 
- uskor = abs (sin(counter)*5);
- if (counter>= LED_NUM) {c_flag=false; combi=combi2;  combi2=random(13);}
- if (counter<= 0) {c_flag=true; combi1=combi2; combi=combi; combi2=random(13);}
- if (c_flag) counter+=2;  else counter-=2;
- //if (combi>= 6) combi_flag=false; 
- //if (combi== 0) combi_flag=true;
-   //  Serial.print("  col_b: ");
-  //  Serial.print(col_b);
-   for (int i=0;i<=counter;i++) 
-        {
-          col_b = bright+sin(i/10)*bright;
-          col_r = bright+sin(i+counter/10)*bright;
-          col_g = bright+cos(i+counter/10)*bright;
-          //if (c_flag) col_g=col_r; else col_g=col_b;
-          select_anim (combi1);
 
-          leds[i] = col_b+(col_r<<8)+(col_g<<16);
-          //Serial.print(" ");
-          //Serial.print(col_b);
-          } 
-    
-    for (int i=counter;i<=LED_NUM;i++) 
-        {
-          col_b = bright+sin(i/10-counter/10)*bright;
-          col_r = bright+cos(i/10+counter/10)*bright;
-          col_g = bright+cos(i/10)*bright;
-          //if (c_flag) col_g=col_b; else col_g=col_r;
-          select_anim (combi);
- 
-          leds[i] = col_b+(col_r<<8)+(col_g<<16);
-          //Serial.print(" ");
-          //Serial.print(col_b);
-          } 
-    // Stars
-    if (stars) {       
-      for (int i=0;i<=10;i++)   {
-          leds[random(LED_NUM)] = 128+(128<<8)+(128<<16);
-            }
-        }   //end start  
+  //pulsator();
+
+
       
-        //For test brightness     
-      if (test) {
-         for (int i=0;i<=LED_NUM;i++) 
-          { //if (counterbyte<=)
-            
-            //leds[i] = col_b+(col_r<<8)+(col_g<<16);} 
-            leds[i] = i+(i<<8)+(i<<16);} 
-                }
-        // end test brightness
+//for (byte i=0; i<=led_tentacle_l;i++)
+ roller();
+
+
   FastLED.show();
-   //delay(100);
+  delay(50);
   debug();
-  FastLED.clear();
-  counterbyte++;
-  t.b2++;
+  //FastLED.clear();
+  counter++;
+  
 
 }
